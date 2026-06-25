@@ -126,19 +126,11 @@ body{font-family:Inter,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif}
       <div class="brand" style="justify-content:center;margin-bottom:6px">Stock<b>IT</b></div>
       <div id="loginForm">
         <p style="color:var(--muted);font-size:13px;margin:6px 0 18px">Log in to your dashboard</p>
-        <input class="in" id="user" placeholder="Username" value="priyesh" style="margin-bottom:10px"/>
+        <input class="in" id="email" type="email" placeholder="Email" style="margin-bottom:10px"/>
         <input class="in" id="pass" type="password" placeholder="Password" style="margin-bottom:8px"/>
         <p id="loginErr" style="color:var(--neg);font-size:12px;min-height:16px;margin-bottom:8px"></p>
         <button class="btn" id="doLogin" style="width:100%;justify-content:center">Login Now <i class="ti ti-arrow-right"></i></button>
-        <p style="color:var(--muted);font-size:11.5px;margin-top:14px">Create-account &amp; real auth arrive in phase 1.5.</p>
-      </div>
-      <div id="changeForm" style="display:none">
-        <p style="color:var(--text);font-size:14px;font-weight:500;margin:6px 0 4px">Welcome, Priyesh 👋</p>
-        <p style="color:var(--muted);font-size:13px;margin-bottom:18px">First login — set your own password.</p>
-        <input class="in" id="newpass" type="password" placeholder="New password" style="margin-bottom:10px"/>
-        <input class="in" id="newpass2" type="password" placeholder="Confirm new password" style="margin-bottom:8px"/>
-        <p id="changeErr" style="color:var(--neg);font-size:12px;min-height:16px;margin-bottom:8px"></p>
-        <button class="btn" id="doChange" style="width:100%;justify-content:center">Save &amp; continue</button>
+        <p style="color:var(--muted);font-size:11.5px;margin-top:14px"><i class="ti ti-lock" style="font-size:12px;vertical-align:-1px"></i> Secured by Supabase · sign-up arrives in phase 1.5.</p>
       </div>
     </div>
   </div>
@@ -200,6 +192,7 @@ body{font-family:Inter,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif}
     <div class="tip" id="tip"></div>
   </div>
 </div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="data.js"></script>
 <script>
 (function(){
@@ -215,14 +208,14 @@ var ACC={blue:['#2f7fdb','rgba(47,127,219,.18)'],purple:['#7c6cf0','rgba(124,108
 var savedAcc=localStorage.getItem('stockit_accent')||'blue';
 (function(){var a=ACC[savedAcc];root.style.setProperty('--accent',a[0]);root.style.setProperty('--accent-soft',a[1]);document.querySelectorAll('.dot').forEach(function(x){x.classList.toggle('active',x.dataset.a===savedAcc);});})();
 
-if(!localStorage.getItem('stockit_pass')){localStorage.setItem('stockit_user','priyesh');localStorage.setItem('stockit_pass','Stock@123');localStorage.setItem('stockit_mustchange','1');}
-function openModal(){document.getElementById('loginForm').style.display='block';document.getElementById('changeForm').style.display='none';document.getElementById('loginErr').textContent='';document.getElementById('loginModal').classList.add('open');}
+var SB=window.supabase.createClient('https://zgombudijpktgxlmfsst.supabase.co','eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inpnb21idWRpanBrdGd4bG1mc3N0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI0MDY0MjYsImV4cCI6MjA5Nzk4MjQyNn0.2I-AW8Ancau_UlakzFeSD4TowBI2RYpSU48xi33X2PY');
+function openModal(){document.getElementById('loginForm').style.display='block';document.getElementById('loginErr').textContent='';document.getElementById('loginModal').classList.add('open');}
 document.querySelectorAll('[data-login]').forEach(function(b){b.onclick=openModal;});
 function enterApp(){document.getElementById('loginModal').classList.remove('open');document.getElementById('landing').style.display='none';document.getElementById('app').style.display='block';}
-document.getElementById('doLogin').onclick=function(){var u=document.getElementById('user').value.trim(),p=document.getElementById('pass').value;if(u===localStorage.getItem('stockit_user')&&p===localStorage.getItem('stockit_pass')){if(localStorage.getItem('stockit_mustchange')==='1'){document.getElementById('loginForm').style.display='none';document.getElementById('changeForm').style.display='block';}else{enterApp();}}else{document.getElementById('loginErr').textContent='Wrong username or password.';}};
-document.getElementById('doChange').onclick=function(){var a=document.getElementById('newpass').value,b=document.getElementById('newpass2').value,e=document.getElementById('changeErr');if(a.length<4){e.textContent='Use at least 4 characters.';return;}if(a!==b){e.textContent='Passwords do not match.';return;}localStorage.setItem('stockit_pass',a);localStorage.setItem('stockit_mustchange','0');enterApp();};
-function logout(){document.getElementById('app').style.display='none';document.getElementById('landing').style.display='flex';var pf=document.getElementById('pass');if(pf)pf.value='';go('dash');}
+document.getElementById('doLogin').onclick=async function(){var em=document.getElementById('email').value.trim(),p=document.getElementById('pass').value,e=document.getElementById('loginErr');if(!em||!p){e.textContent='Enter your email and password.';return;}e.textContent='Signing in…';try{var r=await SB.auth.signInWithPassword({email:em,password:p});if(r.error){e.textContent=r.error.message;}else{e.textContent='';enterApp();}}catch(x){e.textContent='Network error — please try again.';}};
+async function logout(){try{await SB.auth.signOut();}catch(x){}document.getElementById('app').style.display='none';document.getElementById('landing').style.display='flex';var pf=document.getElementById('pass');if(pf)pf.value='';go('dash');}
 document.getElementById('logoutBtn').onclick=logout;var ls=document.getElementById('logoutSide');if(ls)ls.onclick=logout;
+SB.auth.getSession().then(function(res){if(res&&res.data&&res.data.session){enterApp();}});
 
 var themeBtn=document.getElementById('themeBtn');
 function setThemeIcon(){themeBtn.innerHTML=root.getAttribute('data-theme')==='dark'?'<i class="ti ti-moon"></i>':'<i class="ti ti-sun"></i>';}
