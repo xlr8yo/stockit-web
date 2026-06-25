@@ -57,7 +57,7 @@ body{font-family:Inter,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif}
 .stk{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--border);cursor:pointer}.stk:last-child{border-bottom:none}
 .tkr{font-size:14px;font-weight:500}.sub{font-size:12px;color:var(--muted)}
 .badge{font-size:11px;padding:3px 9px;border-radius:8px;font-weight:500;white-space:nowrap}
-.conf{cursor:pointer;text-decoration:underline dotted;text-underline-offset:2px}
+.conf,.strength{cursor:pointer;text-decoration:underline dotted;text-underline-offset:2px}
 .b-pos{background:var(--pos-soft);color:var(--pos)}.b-neg{background:var(--neg-soft);color:var(--neg)}.b-warn{background:var(--warn-soft);color:var(--warn)}.b-acc{background:var(--accent-soft);color:var(--accent)}
 .tile{flex:1;background:var(--surface2);border-radius:10px;padding:12px;text-align:center}.tile .v{font-size:22px;font-weight:600}.tile .l{font-size:11px;color:var(--muted);margin-top:2px}
 .tabs{display:flex;border-top:1px solid var(--border);background:var(--surface);position:sticky;bottom:0}
@@ -225,20 +225,22 @@ document.querySelectorAll('.dot').forEach(function(d){d.onclick=function(){var a
 
 function go(p){root.setAttribute('data-page',p);document.querySelectorAll('[data-nav]').forEach(function(x){x.classList.toggle('active',x.dataset.nav===p);});tip.style.display='none';window.scrollTo(0,0);}
 document.querySelectorAll('[data-nav]').forEach(function(b){b.onclick=function(){go(b.dataset.nav);};});
-function showTip(el){tip.textContent=CONF;tip.style.display='block';var r=el.getBoundingClientRect();var x=Math.max(8,Math.min(r.left,window.innerWidth-tip.offsetWidth-8));tip.style.left=x+'px';tip.style.top=(r.bottom+6)+'px';}
+var STR="Trend strength vs peers (0-100). The model leans toward stronger-momentum stocks — a small historical edge, not a promise. The honest 'chance to beat the market' is inside each stock's detail.";
+function showTip(el,txt){tip.textContent=txt;tip.style.display='block';var r=el.getBoundingClientRect();var x=Math.max(8,Math.min(r.left,window.innerWidth-tip.offsetWidth-8));tip.style.left=x+'px';tip.style.top=(r.bottom+6)+'px';}
+function tipFor(e){var c=e.target.closest('.conf');if(c){showTip(c,CONF);return true;}var st=e.target.closest('.strength');if(st){showTip(st,STR);return true;}return false;}
 root.addEventListener('click',function(e){
- var c=e.target.closest('.conf');if(c){showTip(c);return;}
+ if(tipFor(e))return;
  tip.style.display='none';
  var rm=e.target.closest('.rm');if(rm){WL.splice(+rm.dataset.i,1);renderWL();return;}
  var s=e.target.closest('.stk');if(s&&s.dataset.t){openDetail(s.dataset.t);}
 });
-root.addEventListener('mouseover',function(e){var c=e.target.closest('.conf');if(c)showTip(c);});
-root.addEventListener('mouseout',function(e){if(e.target.closest('.conf'))tip.style.display='none';});
+root.addEventListener('mouseover',function(e){tipFor(e);});
+root.addEventListener('mouseout',function(e){if(e.target.closest('.conf')||e.target.closest('.strength'))tip.style.display='none';});
 
 function find(t){return D.stocks.find(function(s){return s.t===t;});}
-function rowsFor(list,hz){return list.map(function(s){var o=s.h[hz];return '<div class="stk" data-t="'+s.t+'"><div style="flex:1;min-width:0"><div class="tkr">'+s.t+'</div><div class="sub">₹'+fmt(s.p)+' · range ₹'+fmt(o.lo)+'–₹'+fmt(o.hi)+'</div></div><span class="badge conf '+cc(o.c)+'">'+o.c+'%</span></div>';}).join('');}
-function renderDash(hz){var sorted=D.stocks.slice().sort(function(a,b){return b.h[hz].c-a.h[hz].c;});var buys=sorted.slice(0,6),sells=sorted.slice(-6).reverse();
- document.getElementById('dashBody').innerHTML='<span class="badge b-warn"><i class="ti ti-alert-triangle" style="font-size:12px;vertical-align:-1px"></i> Market mood: '+(D.regime||'—')+'</span><div class="dash-grid" style="margin-top:10px"><div><div class="sec"><i class="ti ti-trending-up" style="color:var(--pos)"></i> Lean buy — strongest this '+hz+'</div><div class="card">'+rowsFor(buys,hz)+'</div></div><div><div class="sec"><i class="ti ti-trending-down" style="color:var(--neg)"></i> Lean sell — weakest this '+hz+'</div><div class="card">'+rowsFor(sells,hz)+'</div></div></div>';}
+function rowsFor(list,hz){return list.map(function(s){var o=s.h[hz];var col=s.ms>=60?'b-pos':s.ms<=40?'b-neg':'b-warn';return '<div class="stk" data-t="'+s.t+'"><div style="flex:1;min-width:0"><div class="tkr">'+s.t+'</div><div class="sub">₹'+fmt(s.p)+' · range ₹'+fmt(o.lo)+'–₹'+fmt(o.hi)+'</div></div><span class="badge strength '+col+'">'+s.ms+'</span></div>';}).join('');}
+function renderDash(hz){var sorted=D.stocks.slice().sort(function(a,b){return b.ms-a.ms;});var buys=sorted.slice(0,6),sells=sorted.slice(-6).reverse();
+ document.getElementById('dashBody').innerHTML='<span class="badge b-warn"><i class="ti ti-alert-triangle" style="font-size:12px;vertical-align:-1px"></i> Market mood: '+(D.regime||'—')+'</span><div class="sub" style="margin:9px 2px 2px"><i class="ti ti-bolt" style="font-size:12px;vertical-align:-1px"></i> The number is trend strength (0-100) — tap it to learn what it means.</div><div class="dash-grid" style="margin-top:10px"><div><div class="sec"><i class="ti ti-trending-up" style="color:var(--pos)"></i> Lean buy — strongest this '+hz+'</div><div class="card">'+rowsFor(buys,hz)+'</div></div><div><div class="sec"><i class="ti ti-trending-down" style="color:var(--neg)"></i> Lean sell — weakest this '+hz+'</div><div class="card">'+rowsFor(sells,hz)+'</div></div></div>';}
 document.querySelectorAll('.seg[data-h]').forEach(function(s){s.onclick=function(){document.querySelectorAll('.seg[data-h]').forEach(function(x){x.classList.toggle('active',x===s);});renderDash(s.dataset.h);};});
 
 function bar(lo,mid,hi,today){var span=(hi-lo)||1;var tp=Math.max(2,Math.min(98,(today-lo)/span*100));var mp=Math.max(0,Math.min(100,(mid-lo)/span*100));return '<div style="position:relative;height:9px;border-radius:99px;overflow:hidden;background:var(--neg-soft);margin:12px 0 6px"><div style="position:absolute;left:'+tp+'%;right:0;top:0;bottom:0;background:var(--pos-soft)"></div><div style="position:absolute;left:'+tp+'%;top:-3px;bottom:-3px;width:2px;background:var(--text)"></div><div style="position:absolute;left:'+mp+'%;top:50%;transform:translate(-50%,-50%);width:11px;height:11px;border-radius:50%;background:var(--accent)"></div></div><div style="display:flex;justify-content:space-between;font-size:11px;color:var(--muted)"><span>₹'+fmt(lo)+'</span><span style="color:var(--text)">today ₹'+fmt(today)+'</span><span>₹'+fmt(hi)+'</span></div>';}
@@ -249,17 +251,23 @@ function openDetail(t){var s=find(t);if(!s)return;var blocks=['day','week','mont
  document.getElementById('back').onclick=function(){go(prev);};
  document.getElementById('dAdd').onclick=function(){if(WL.indexOf(s.t)<0)WL.push(s.t);renderWL();go('watch');};
 }
-var WL=D.stocks.slice(0,4).map(function(s){return s.t;});
+var WL=[];
 function chips(s){return ['day','week','month','year'].map(function(k){var c=s.h[k].c;return '<span class="badge '+cc(c)+'" style="min-width:34px;text-align:center">'+k[0].toUpperCase()+' '+c+'</span>';}).join(' ');}
 function renderWL(){var b=document.getElementById('wlBody');if(!WL.length){b.innerHTML='<p class="sub" style="padding:14px">No stocks yet — search above to add one.</p>';return;}
  b.innerHTML=WL.map(function(t,i){var s=find(t);if(!s)return '';return '<div class="card stk" data-t="'+t+'" style="margin:0"><div style="display:flex;justify-content:space-between;align-items:center;width:100%"><div><div class="tkr">'+t+'</div><div class="sub">₹'+fmt(s.p)+'</div></div><button class="ico rm" data-i="'+i+'" style="font-size:17px;color:var(--muted)"><i class="ti ti-x"></i></button></div><div style="display:flex;gap:6px;margin-top:10px;flex-wrap:wrap">'+chips(s)+'</div></div>';}).join('');}
 function addToWatch(){var raw=document.getElementById('wlIn').value.trim().toUpperCase();if(!raw)return;var s=find(raw);if(!s){var pre=D.stocks.filter(function(x){return x.t.indexOf(raw)===0;});var sub=D.stocks.filter(function(x){return x.t.indexOf(raw)>=0;});s=pre[0]||sub[0];}if(s){if(WL.indexOf(s.t)<0)WL.push(s.t);document.getElementById('wlIn').value='';renderWL();}else{alert('No match for "'+raw+'". Try part of the name, e.g. "rel" for Reliance.');}}
 document.getElementById('wlAdd').onclick=addToWatch;
 document.getElementById('wlIn').addEventListener('keydown',function(e){if(e.key==='Enter'){e.preventDefault();addToWatch();}});
-function renderScore(){var sc=D.score||{};var hh=[['day','Day'],['week','Week'],['month','Month'],['year','Year']];
- var live='<div class="card" style="margin:0 0 16px;border-color:var(--accent)"><div style="display:flex;align-items:center;gap:8px;margin-bottom:6px"><i class="ti ti-circle-dot" style="color:var(--accent)"></i><span class="tkr">Live track record (real)</span></div><div class="sub" style="line-height:1.6">Tracking started '+(D.asOf||'today')+'. <b>0 predictions settled yet</b> — nothing real to grade until they mature. First real results: 1-day next trading day · 1-week in ~5 days · 1-month in ~21 days · 1-year in ~1 year.</div></div>';
- var bt='<p class="sub" style="margin:2px 2px 10px"><i class="ti ti-flask" style="vertical-align:-1px"></i> Backtested simulation — 10 years of history, NOT live results:</p><div class="grid">'+hh.map(function(p){var s=sc[p[0]]||{range:0,direction:0};return '<div class="card" style="margin:0"><span class="tkr" style="color:var(--accent)">'+p[1]+'</span><div style="display:flex;gap:8px;margin-top:10px"><div class="tile"><div class="v">'+s.range+'%</div><div class="l">in range</div></div><div class="tile"><div class="v">'+s.direction+'%</div><div class="l">direction</div></div></div></div>';}).join('')+'</div>';
- document.getElementById('scoreBody').innerHTML=live+bt;}
+function renderScore(){var sc=D.score||{};var lv=D.live||{};var hh=[['day','Day'],['week','Week'],['month','Month'],['year','Year']];
+ var total=hh.reduce(function(a,p){return a+((lv[p[0]]&&lv[p[0]].settled)||0);},0);
+ var live;
+ if(total===0){
+  live='<div class="card" style="border-color:var(--accent)"><div style="display:flex;align-items:center;gap:8px;margin-bottom:6px"><i class="ti ti-circle-dot" style="color:var(--accent)"></i><span class="tkr">Live accuracy (real)</span></div><div class="sub" style="line-height:1.6">Tracking started '+(D.asOf||'today')+'. <b>0 predictions have settled yet</b> — this fills in automatically as your calls mature and get graded against what actually happened.<br>First results: 1-day next trading day · 1-week ~5 days · 1-month ~21 days · 1-year ~1 year.</div></div>';
+ }else{
+  live='<p class="sub" style="margin:4px 2px 10px">Real, self-graded accuracy — only from predictions that have actually played out:</p><div class="grid">'+hh.map(function(p){var s=lv[p[0]]||{};var n=s.settled||0;return '<div class="card" style="margin:0"><div style="display:flex;justify-content:space-between;align-items:center"><span class="tkr" style="color:var(--accent)">'+p[1]+'</span><span class="badge '+(n?'b-pos':'b-warn')+'">'+n+' graded</span></div>'+(n?'<div style="display:flex;gap:8px;margin-top:10px"><div class="tile"><div class="v">'+(s.range==null?'-':s.range+'%')+'</div><div class="l">in range</div></div><div class="tile"><div class="v">'+(s.dir==null?'-':s.dir+'%')+'</div><div class="l">direction</div></div></div>':'<div class="sub" style="margin-top:8px">still maturing…</div>')+'</div>';}).join('')+'</div>';
+ }
+ var bt='<details style="margin-top:18px"><summary style="cursor:pointer;color:var(--muted);font-size:13px;padding:6px 0"><i class="ti ti-flask" style="vertical-align:-1px"></i> See the 10-year backtested simulation (reference only — not live)</summary><div class="grid" style="margin-top:12px">'+hh.map(function(p){var s=sc[p[0]]||{range:0,direction:0};return '<div class="card" style="margin:0"><span class="tkr" style="color:var(--muted)">'+p[1]+'</span><div style="display:flex;gap:8px;margin-top:10px"><div class="tile"><div class="v">'+s.range+'%</div><div class="l">in range</div></div><div class="tile"><div class="v">'+s.direction+'%</div><div class="l">direction</div></div></div></div>';}).join('')+'</div></details>';
+ document.getElementById('scoreBody').innerHTML='<p class="sub" style="margin:4px 2px 14px">This page shows your <b>real, live</b> results — nothing simulated.</p>'+live+bt;}
 function renderHist(){var h=D.history||{};var keys=Object.keys(h);if(!keys.length){document.getElementById('histBody').innerHTML='<p class="sub">No history yet.</p>';return;}var labels={recent:'Recent',older:'Earlier',oldest:'Oldest'};
  document.getElementById('histChips').innerHTML=keys.map(function(k,i){return '<div class="seg histchip'+(i===0?' active':'')+'" data-k="'+k+'">'+(labels[k]||k)+'</div>';}).join('');
  document.querySelectorAll('.histchip').forEach(function(c){c.onclick=function(){document.querySelectorAll('.histchip').forEach(function(x){x.classList.toggle('active',x===c);});drawHist(c.dataset.k);};});drawHist(keys[0]);}
