@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>StockIT by Priyesh</title>
+<link href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.7.0/dist/tabler-icons.min.css" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Inter,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif}
+#root{--bg:#0e0f13;--surface:#1a1c22;--surface2:#23262e;--text:#f1f2f5;--muted:#9a9ca6;--border:rgba(255,255,255,.12);--accent:#2f7fdb;--accent-soft:rgba(47,127,219,.18);--pos:#37c46f;--pos-soft:rgba(55,196,111,.16);--neg:#e8736f;--neg-soft:rgba(232,115,111,.16);--warn:#e0b65a;--warn-soft:rgba(224,182,90,.16);background:var(--bg);color:var(--text);min-height:100vh}
+#root[data-theme="light"]{--bg:#f6f6f4;--surface:#fff;--surface2:#ececea;--text:#1b1b1d;--muted:#6c6c68;--border:rgba(0,0,0,.1);--pos:#1d8f4e;--pos-soft:#e7f4ec;--neg:#c63d3d;--neg-soft:#fbeaea;--warn:#9a6b10;--warn-soft:#f6eed9}
+.brand{font-size:21px;font-weight:700;display:flex;align-items:baseline;gap:7px}.brand b{color:var(--accent)}.brand i.s{font-size:14px;color:var(--muted);font-weight:500;font-style:italic;font-family:Georgia,serif}
+.ico{background:none;border:none;color:var(--text);cursor:pointer;display:inline-flex;line-height:1;padding:0}
+.dot{width:16px;height:16px;border-radius:50%;cursor:pointer;border:2px solid transparent;display:inline-block}.dot.active{border-color:var(--text)}
+.btn{background:var(--accent);color:#fff;border:none;border-radius:11px;padding:13px 22px;font-size:15px;font-weight:600;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;gap:8px}
+.btn2{background:var(--accent-soft);color:var(--accent);border:1px solid var(--accent);border-radius:10px;padding:9px 14px;font-size:13px;font-weight:500;cursor:pointer;font-family:inherit}
+.in{width:100%;background:var(--surface2);border:1px solid var(--border);color:var(--text);border-radius:10px;padding:12px 14px;font-size:15px;font-family:inherit}
+
+#landing{display:flex;flex-direction:column;min-height:100vh;background:radial-gradient(1100px 520px at 72% 22%,rgba(47,127,219,.20),transparent 70%),var(--bg)}
+.hero-top{display:flex;align-items:center;justify-content:space-between;padding:20px 26px;max-width:1240px;margin:0 auto;width:100%}
+.logo-badge{width:42px;height:42px;border-radius:11px;background:linear-gradient(160deg,#2f7fdb,#1c5fae);color:#fff;display:flex;align-items:center;justify-content:center;font-size:22px}
+.hero-grid{flex:1;display:grid;grid-template-columns:1fr;gap:26px;align-items:center;padding:14px 26px 26px;max-width:1240px;margin:0 auto;width:100%}
+.hero-h1{font-size:42px;font-weight:700;line-height:1.04;letter-spacing:-1.5px}
+.hero-h1 .g{background:linear-gradient(95deg,#5b8def,#9b6cf0);-webkit-background-clip:text;background-clip:text;color:transparent}
+.hero-h1 .d{color:var(--accent)}
+.aline{width:118px;height:4px;border-radius:2px;background:linear-gradient(90deg,var(--accent),#37c46f);margin:20px 0}
+.hero-sub{color:var(--muted);font-size:17px;line-height:1.6;margin-bottom:28px;max-width:420px}
+.hero-visual{position:relative;background:linear-gradient(180deg,rgba(47,127,219,.08),rgba(255,255,255,.02));border:1px solid var(--border);border-radius:20px;min-height:300px;overflow:hidden;display:flex;align-items:flex-end}
+.nifty-card{position:absolute;top:20px;right:20px;background:rgba(14,15,19,.72);border:1px solid var(--border);border-radius:14px;padding:14px 18px}
+.nifty-card .l{font-size:13px;color:var(--muted)}.nifty-card .v{font-size:26px;font-weight:700;margin:2px 0}.nifty-card .c{font-size:14px;color:var(--pos);font-weight:600}.nifty-card .bull{display:inline-flex;gap:5px;align-items:center;margin-top:8px;background:var(--pos-soft);color:var(--pos);font-size:12px;font-weight:600;padding:4px 10px;border-radius:8px}
+.hero-disc{display:flex;gap:10px;align-items:flex-start;padding:16px 26px;border-top:1px solid var(--border);color:var(--muted);font-size:12.5px;line-height:1.5;max-width:1240px;margin:0 auto;width:100%}
+@media(min-width:900px){.hero-grid{grid-template-columns:1.05fr .95fr;gap:46px;padding:24px 40px 40px}.hero-h1{font-size:64px}.hero-visual{min-height:380px}}
+
+#loginModal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:50;align-items:center;justify-content:center;padding:20px}
+#loginModal.open{display:flex}
+.login-card{background:var(--surface);border:1px solid var(--border);border-radius:18px;padding:30px 26px;width:100%;max-width:370px;text-align:center}
+
+#app{display:none}
+.shell{display:flex;flex-direction:column;min-height:100vh}
+.side{display:none}
+.main{flex:1;width:100%;max-width:1180px;margin:0 auto}
+.topbar{display:flex;align-items:center;gap:10px;padding:14px 18px;border-bottom:1px solid var(--border)}
+.dots{display:flex;gap:6px;margin-left:auto;align-items:center}
+.seg-wrap{display:none;gap:6px;padding:14px 18px 2px}#root[data-page="dash"] .seg-wrap{display:flex;max-width:560px}
+.seg{flex:1;padding:9px 2px;border-radius:10px;background:var(--surface2);color:var(--muted);text-align:center;font-size:13px;cursor:pointer;border:1px solid transparent}
+.seg.active{background:var(--accent-soft);color:var(--accent);border-color:var(--accent);font-weight:500}
+.body{padding:10px 18px 20px}
+.page{display:none}
+#root[data-page="dash"] #p-dash,#root[data-page="watch"] #p-watch,#root[data-page="history"] #p-history,#root[data-page="score"] #p-score,#root[data-page="detail"] #p-detail{display:block}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:12px 15px;margin-bottom:10px}
+.sec{font-size:12px;color:var(--muted);margin:8px 2px 8px;display:flex;align-items:center;gap:7px}
+.dash-grid{display:grid;grid-template-columns:1fr;gap:6px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:12px}
+.hz-grid{display:grid;grid-template-columns:1fr;gap:8px}
+.stk{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--border);cursor:pointer}.stk:last-child{border-bottom:none}
+.tkr{font-size:14px;font-weight:500}.sub{font-size:12px;color:var(--muted)}
+.badge{font-size:11px;padding:3px 9px;border-radius:8px;font-weight:500;white-space:nowrap}
+.conf{cursor:pointer;text-decoration:underline dotted;text-underline-offset:2px}
+.b-pos{background:var(--pos-soft);color:var(--pos)}.b-neg{background:var(--neg-soft);color:var(--neg)}.b-warn{background:var(--warn-soft);color:var(--warn)}.b-acc{background:var(--accent-soft);color:var(--accent)}
+.tile{flex:1;background:var(--surface2);border-radius:10px;padding:12px;text-align:center}.tile .v{font-size:22px;font-weight:600}.tile .l{font-size:11px;color:var(--muted);margin-top:2px}
+.tabs{display:flex;border-top:1px solid var(--border);background:var(--surface);position:sticky;bottom:0}
+.tabs button{flex:1;background:none;border:none;color:var(--muted);padding:9px 0 10px;font-size:11px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:3px;font-family:inherit}
+.tabs button i{font-size:21px}.tabs button.active{color:var(--accent)}
+.tip{display:none;position:fixed;max-width:250px;background:var(--surface2);border:1px solid var(--border);color:var(--text);font-size:12px;line-height:1.5;padding:9px 11px;border-radius:10px;z-index:60}
+.hrow{display:flex;align-items:center;gap:10px;margin-bottom:4px}.hlbl{width:52px;font-size:12px;color:var(--muted)}
+.disc{font-size:11px;color:var(--muted);padding:14px 18px;border-top:1px solid var(--border);line-height:1.5}
+@media(min-width:900px){
+ .shell{flex-direction:row}
+ .side{display:flex;flex-direction:column;width:236px;border-right:1px solid var(--border);padding:18px 14px;gap:4px;position:sticky;top:0;height:100vh}
+ .side .navb{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:11px;background:none;border:none;color:var(--muted);font-size:15px;cursor:pointer;font-family:inherit;text-align:left;width:100%}
+ .side .navb i{font-size:21px}.side .navb.active{background:var(--accent-soft);color:var(--accent);font-weight:500}
+ .tabs{display:none}
+ .topbar .brand-m{display:none}
+ .body{padding:20px 30px 36px}
+ .dash-grid{grid-template-columns:1fr 1fr;gap:20px}
+ .hz-grid{grid-template-columns:1fr 1fr;gap:18px}
+ #p-detail{max-width:680px}
+}
+</style>
+</head>
+<body>
+<div id="root" data-theme="dark" data-page="dash">
+
+  <div id="landing">
+    <div class="hero-top">
+      <div class="brand"><span class="logo-badge"><i class="ti ti-chart-candle"></i></span> Stock<b>IT</b> <i class="s">by Priyesh</i></div>
+      <button class="btn" data-login>Login Now <i class="ti ti-arrow-right"></i></button>
+    </div>
+    <div class="hero-grid">
+      <div>
+        <div class="hero-h1"><span class="g">AI</span> Smarter<br/>Insights<span class="d">.</span></div>
+        <div class="aline"></div>
+        <div class="hero-sub">AI-powered insights for smarter stock market decisions.</div>
+      </div>
+      <div class="hero-visual">
+        <div class="nifty-card">
+          <div class="l">NIFTY 50</div>
+          <div class="v">24,812.65</div>
+          <div class="c">+1.25% (305.40)</div>
+          <div class="bull"><i class="ti ti-trending-up"></i> Bullish</div>
+        </div>
+        <svg viewBox="0 0 520 300" width="100%" height="100%" preserveAspectRatio="xMidYMax meet" style="display:block">
+          <g stroke-linecap="butt">
+            <line x1="40" y1="232" x2="40" y2="262" stroke="#e8736f" stroke-width="2"/><rect x="33" y="240" width="14" height="16" rx="2" fill="#e8736f"/>
+            <line x1="90" y1="218" x2="90" y2="250" stroke="#37c46f" stroke-width="2"/><rect x="83" y="226" width="14" height="18" rx="2" fill="#37c46f"/>
+            <line x1="140" y1="204" x2="140" y2="238" stroke="#37c46f" stroke-width="2"/><rect x="133" y="212" width="14" height="18" rx="2" fill="#37c46f"/>
+            <line x1="190" y1="216" x2="190" y2="250" stroke="#e8736f" stroke-width="2"/><rect x="183" y="224" width="14" height="18" rx="2" fill="#e8736f"/>
+            <line x1="240" y1="180" x2="240" y2="216" stroke="#37c46f" stroke-width="2"/><rect x="233" y="188" width="14" height="20" rx="2" fill="#37c46f"/>
+            <line x1="290" y1="160" x2="290" y2="196" stroke="#37c46f" stroke-width="2"/><rect x="283" y="168" width="14" height="20" rx="2" fill="#37c46f"/>
+            <line x1="340" y1="174" x2="340" y2="210" stroke="#e8736f" stroke-width="2"/><rect x="333" y="182" width="14" height="20" rx="2" fill="#e8736f"/>
+            <line x1="390" y1="134" x2="390" y2="172" stroke="#37c46f" stroke-width="2"/><rect x="383" y="142" width="14" height="22" rx="2" fill="#37c46f"/>
+            <line x1="445" y1="100" x2="445" y2="148" stroke="#37c46f" stroke-width="2"/><rect x="438" y="108" width="14" height="28" rx="2" fill="#37c46f"/>
+          </g>
+          <circle cx="445" cy="104" r="5" fill="#37c46f"/>
+        </svg>
+      </div>
+    </div>
+    <div class="hero-disc"><i class="ti ti-info-circle" style="font-size:15px"></i><span>Predictions are generated by machine-learning models and are intended for informational purposes only. They do not constitute investment advice or a recommendation to buy or sell any securities.</span></div>
+  </div>
+
+  <div id="loginModal">
+    <div class="login-card">
+      <div class="logo-badge" style="margin:0 auto 16px"><i class="ti ti-chart-candle"></i></div>
+      <div class="brand" style="justify-content:center;margin-bottom:6px">Stock<b>IT</b></div>
+      <div id="loginForm">
+        <p style="color:var(--muted);font-size:13px;margin:6px 0 18px">Log in to your dashboard</p>
+        <input class="in" id="user" placeholder="Username" value="priyesh" style="margin-bottom:10px"/>
+        <input class="in" id="pass" type="password" placeholder="Password" style="margin-bottom:8px"/>
+        <p id="loginErr" style="color:var(--neg);font-size:12px;min-height:16px;margin-bottom:8px"></p>
+        <button class="btn" id="doLogin" style="width:100%;justify-content:center">Login Now <i class="ti ti-arrow-right"></i></button>
+        <p style="color:var(--muted);font-size:11.5px;margin-top:14px">Create-account &amp; real auth arrive in phase 1.5.</p>
+      </div>
+      <div id="changeForm" style="display:none">
+        <p style="color:var(--text);font-size:14px;font-weight:500;margin:6px 0 4px">Welcome, Priyesh 👋</p>
+        <p style="color:var(--muted);font-size:13px;margin-bottom:18px">First login — set your own password.</p>
+        <input class="in" id="newpass" type="password" placeholder="New password" style="margin-bottom:10px"/>
+        <input class="in" id="newpass2" type="password" placeholder="Confirm new password" style="margin-bottom:8px"/>
+        <p id="changeErr" style="color:var(--neg);font-size:12px;min-height:16px;margin-bottom:8px"></p>
+        <button class="btn" id="doChange" style="width:100%;justify-content:center">Save &amp; continue</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="app">
+    <div class="shell">
+      <aside class="side">
+        <div class="brand" style="padding:6px 10px 18px">Stock<b>IT</b> <i class="s">by Priyesh</i></div>
+        <button class="navb active" data-nav="dash"><i class="ti ti-home"></i> Dashboard</button>
+        <button class="navb" data-nav="watch"><i class="ti ti-star"></i> Watchlist</button>
+        <button class="navb" data-nav="history"><i class="ti ti-history"></i> History</button>
+        <button class="navb" data-nav="score"><i class="ti ti-chart-bar"></i> Scorecard</button>
+        <button class="navb" id="logoutSide" style="margin-top:auto"><i class="ti ti-logout"></i> Log out</button>
+      </aside>
+      <div class="main">
+        <div class="topbar">
+          <div class="brand brand-m">Stock<b>IT</b> <i class="s">by Priyesh</i></div>
+          <div class="dots">
+            <span class="dot active" data-a="blue" style="background:#2f7fdb"></span>
+            <span class="dot" data-a="purple" style="background:#7c6cf0"></span>
+            <span class="dot" data-a="orange" style="background:#e08a2b"></span>
+            <span class="dot" data-a="green" style="background:#2faf5f"></span>
+            <span class="dot" data-a="yellow" style="background:#d6b520"></span>
+            <span class="dot" data-a="pink" style="background:#d4537e"></span>
+            <button class="ico" id="themeBtn" style="font-size:19px;margin-left:5px"><i class="ti ti-moon"></i></button>
+            <button class="ico" id="logoutBtn" title="Log out" style="font-size:18px;margin-left:9px"><i class="ti ti-logout"></i></button>
+          </div>
+        </div>
+        <div class="seg-wrap">
+          <div class="seg active" data-h="day">Day</div>
+          <div class="seg" data-h="week">Week</div>
+          <div class="seg" data-h="month">Month</div>
+          <div class="seg" data-h="year">Year</div>
+        </div>
+        <div class="body">
+          <div class="page" id="p-dash"><div id="dashBody"></div></div>
+          <div class="page" id="p-watch">
+            <p class="sub" style="margin:6px 2px 12px">Add a stock — we run the day/week/month/year analysis on it.</p>
+            <div style="display:flex;gap:8px;margin-bottom:16px;max-width:460px"><input class="in" id="wlIn" placeholder="Search to add — e.g. DMART"/><button class="btn2" id="wlAdd">Add</button></div>
+            <div id="wlBody" class="grid"></div>
+          </div>
+          <div class="page" id="p-history">
+            <p class="sub" style="margin:6px 2px 12px">Pick a date to see what we predicted then — and what happened.</p>
+            <div id="histChips" style="display:flex;gap:6px;margin-bottom:14px;max-width:460px"></div>
+            <div id="histBody"></div>
+          </div>
+          <div class="page" id="p-score"><div id="scoreBody"></div></div>
+          <div class="page" id="p-detail"></div>
+        </div>
+        <div class="disc"><i class="ti ti-info-circle" style="font-size:13px;vertical-align:-1px"></i> Predictions are generated by machine-learning models for informational purposes only — not investment advice or a recommendation to buy or sell any securities.</div>
+      </div>
+      <nav class="tabs">
+        <button data-nav="dash" class="active"><i class="ti ti-home"></i>Dashboard</button>
+        <button data-nav="watch"><i class="ti ti-star"></i>Watchlist</button>
+        <button data-nav="history"><i class="ti ti-history"></i>History</button>
+        <button data-nav="score"><i class="ti ti-chart-bar"></i>Scorecard</button>
+      </nav>
+    </div>
+    <div class="tip" id="tip"></div>
+  </div>
+</div>
+<script src="data.js"></script>
+<script>
+(function(){
+var D=window.STOCKIT_DATA||{stocks:[],score:{},history:{}};
+var root=document.getElementById('root'),tip=document.getElementById('tip');
+var CONF="What this % means: out of 100 past look-alike setups, the stock ended in the market's better-performing half about this often. 50% = a coin toss — a lean, not a promise.";
+var fmt=function(n){return Math.round(n).toLocaleString('en-IN');};
+var cc=function(c){return c>=51?'b-pos':c<=49?'b-neg':'b-warn';};
+
+var savedTheme=localStorage.getItem('stockit_theme')||'dark';
+root.setAttribute('data-theme',savedTheme);
+var ACC={blue:['#2f7fdb','rgba(47,127,219,.18)'],purple:['#7c6cf0','rgba(124,108,240,.18)'],orange:['#e08a2b','rgba(224,138,43,.18)'],green:['#2faf5f','rgba(47,175,95,.18)'],yellow:['#d6b520','rgba(214,181,32,.22)'],pink:['#d4537e','rgba(212,83,126,.18)']};
+var savedAcc=localStorage.getItem('stockit_accent')||'blue';
+(function(){var a=ACC[savedAcc];root.style.setProperty('--accent',a[0]);root.style.setProperty('--accent-soft',a[1]);document.querySelectorAll('.dot').forEach(function(x){x.classList.toggle('active',x.dataset.a===savedAcc);});})();
+
+if(!localStorage.getItem('stockit_pass')){localStorage.setItem('stockit_user','priyesh');localStorage.setItem('stockit_pass','Stock@123');localStorage.setItem('stockit_mustchange','1');}
+function openModal(){document.getElementById('loginForm').style.display='block';document.getElementById('changeForm').style.display='none';document.getElementById('loginErr').textContent='';document.getElementById('loginModal').classList.add('open');}
+document.querySelectorAll('[data-login]').forEach(function(b){b.onclick=openModal;});
+function enterApp(){document.getElementById('loginModal').classList.remove('open');document.getElementById('landing').style.display='none';document.getElementById('app').style.display='block';}
+document.getElementById('doLogin').onclick=function(){var u=document.getElementById('user').value.trim(),p=document.getElementById('pass').value;if(u===localStorage.getItem('stockit_user')&&p===localStorage.getItem('stockit_pass')){if(localStorage.getItem('stockit_mustchange')==='1'){document.getElementById('loginForm').style.display='none';document.getElementById('changeForm').style.display='block';}else{enterApp();}}else{document.getElementById('loginErr').textContent='Wrong username or password.';}};
+document.getElementById('doChange').onclick=function(){var a=document.getElementById('newpass').value,b=document.getElementById('newpass2').value,e=document.getElementById('changeErr');if(a.length<4){e.textContent='Use at least 4 characters.';return;}if(a!==b){e.textContent='Passwords do not match.';return;}localStorage.setItem('stockit_pass',a);localStorage.setItem('stockit_mustchange','0');enterApp();};
+function logout(){document.getElementById('app').style.display='none';document.getElementById('landing').style.display='flex';var pf=document.getElementById('pass');if(pf)pf.value='';go('dash');}
+document.getElementById('logoutBtn').onclick=logout;var ls=document.getElementById('logoutSide');if(ls)ls.onclick=logout;
+
+var themeBtn=document.getElementById('themeBtn');
+function setThemeIcon(){themeBtn.innerHTML=root.getAttribute('data-theme')==='dark'?'<i class="ti ti-moon"></i>':'<i class="ti ti-sun"></i>';}
+setThemeIcon();
+themeBtn.onclick=function(){var d=root.getAttribute('data-theme')==='dark'?'light':'dark';root.setAttribute('data-theme',d);localStorage.setItem('stockit_theme',d);setThemeIcon();};
+document.querySelectorAll('.dot').forEach(function(d){d.onclick=function(){var a=ACC[d.dataset.a];root.style.setProperty('--accent',a[0]);root.style.setProperty('--accent-soft',a[1]);localStorage.setItem('stockit_accent',d.dataset.a);document.querySelectorAll('.dot').forEach(function(x){x.classList.remove('active');});d.classList.add('active');};});
+
+function go(p){root.setAttribute('data-page',p);document.querySelectorAll('[data-nav]').forEach(function(x){x.classList.toggle('active',x.dataset.nav===p);});tip.style.display='none';window.scrollTo(0,0);}
+document.querySelectorAll('[data-nav]').forEach(function(b){b.onclick=function(){go(b.dataset.nav);};});
+function showTip(el){tip.textContent=CONF;tip.style.display='block';var r=el.getBoundingClientRect();var x=Math.max(8,Math.min(r.left,window.innerWidth-tip.offsetWidth-8));tip.style.left=x+'px';tip.style.top=(r.bottom+6)+'px';}
+root.addEventListener('click',function(e){
+ var c=e.target.closest('.conf');if(c){showTip(c);return;}
+ tip.style.display='none';
+ var rm=e.target.closest('.rm');if(rm){WL.splice(+rm.dataset.i,1);renderWL();return;}
+ var s=e.target.closest('.stk');if(s&&s.dataset.t){openDetail(s.dataset.t);}
+});
+root.addEventListener('mouseover',function(e){var c=e.target.closest('.conf');if(c)showTip(c);});
+root.addEventListener('mouseout',function(e){if(e.target.closest('.conf'))tip.style.display='none';});
+
+function find(t){return D.stocks.find(function(s){return s.t===t;});}
+function rowsFor(list,hz){return list.map(function(s){var o=s.h[hz];return '<div class="stk" data-t="'+s.t+'"><div style="flex:1;min-width:0"><div class="tkr">'+s.t+'</div><div class="sub">₹'+fmt(s.p)+' · range ₹'+fmt(o.lo)+'–₹'+fmt(o.hi)+'</div></div><span class="badge conf '+cc(o.c)+'">'+o.c+'%</span></div>';}).join('');}
+function renderDash(hz){var sorted=D.stocks.slice().sort(function(a,b){return b.h[hz].c-a.h[hz].c;});var buys=sorted.slice(0,6),sells=sorted.slice(-6).reverse();
+ document.getElementById('dashBody').innerHTML='<span class="badge b-warn"><i class="ti ti-alert-triangle" style="font-size:12px;vertical-align:-1px"></i> Market mood: '+(D.regime||'—')+'</span><div class="dash-grid" style="margin-top:10px"><div><div class="sec"><i class="ti ti-trending-up" style="color:var(--pos)"></i> Lean buy — strongest this '+hz+'</div><div class="card">'+rowsFor(buys,hz)+'</div></div><div><div class="sec"><i class="ti ti-trending-down" style="color:var(--neg)"></i> Lean sell — weakest this '+hz+'</div><div class="card">'+rowsFor(sells,hz)+'</div></div></div>';}
+document.querySelectorAll('.seg[data-h]').forEach(function(s){s.onclick=function(){document.querySelectorAll('.seg[data-h]').forEach(function(x){x.classList.toggle('active',x===s);});renderDash(s.dataset.h);};});
+
+function bar(lo,mid,hi,today){var span=(hi-lo)||1;var tp=Math.max(2,Math.min(98,(today-lo)/span*100));var mp=Math.max(0,Math.min(100,(mid-lo)/span*100));return '<div style="position:relative;height:9px;border-radius:99px;overflow:hidden;background:var(--neg-soft);margin:12px 0 6px"><div style="position:absolute;left:'+tp+'%;right:0;top:0;bottom:0;background:var(--pos-soft)"></div><div style="position:absolute;left:'+tp+'%;top:-3px;bottom:-3px;width:2px;background:var(--text)"></div><div style="position:absolute;left:'+mp+'%;top:50%;transform:translate(-50%,-50%);width:11px;height:11px;border-radius:50%;background:var(--accent)"></div></div><div style="display:flex;justify-content:space-between;font-size:11px;color:var(--muted)"><span>₹'+fmt(lo)+'</span><span style="color:var(--text)">today ₹'+fmt(today)+'</span><span>₹'+fmt(hi)+'</span></div>';}
+var HZL={day:'Day',week:'Week',month:'Month',year:'Year'};
+function openDetail(t){var s=find(t);if(!s)return;var blocks=['day','week','month','year'].map(function(k){var o=s.h[k];return '<div class="card"><div class="hrow"><span class="hlbl">'+HZL[k]+'</span><span class="badge conf '+cc(o.c)+'" style="margin-left:auto">'+o.c+'%</span></div>'+bar(o.lo,o.mid,o.hi,s.p)+'</div>';}).join('');var up=s.h.month.c>=51;
+ document.getElementById('p-detail').innerHTML='<button class="ico" id="back" style="font-size:19px;margin:4px 0 12px"><i class="ti ti-arrow-left"></i></button><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px"><div><div class="tkr" style="font-size:20px">'+s.t+'</div><div class="sub">from ₹'+fmt(s.p)+' · '+D.asOf+' close</div></div><span class="badge '+(up?'b-pos':'b-neg')+'">'+(up?'Lean buy':'Lean sell')+'</span></div><p class="sub" style="margin:10px 0 14px">Green = upside above today · red = downside · dot = best guess · tap any % to learn what it means.</p><div class="hz-grid">'+blocks+'</div><button class="btn2" id="dAdd" style="margin-top:12px">+ Add to watchlist</button>';
+ var prev=root.getAttribute('data-page');if(prev==='detail')prev='dash';root.setAttribute('data-page','detail');window.scrollTo(0,0);
+ document.getElementById('back').onclick=function(){go(prev);};
+ document.getElementById('dAdd').onclick=function(){if(WL.indexOf(s.t)<0)WL.push(s.t);renderWL();go('watch');};
+}
+var WL=D.stocks.slice(0,4).map(function(s){return s.t;});
+function chips(s){return ['day','week','month','year'].map(function(k){var c=s.h[k].c;return '<span class="badge '+cc(c)+'" style="min-width:34px;text-align:center">'+k[0].toUpperCase()+' '+c+'</span>';}).join(' ');}
+function renderWL(){var b=document.getElementById('wlBody');if(!WL.length){b.innerHTML='<p class="sub" style="padding:14px">No stocks yet — search above to add one.</p>';return;}
+ b.innerHTML=WL.map(function(t,i){var s=find(t);if(!s)return '';return '<div class="card stk" data-t="'+t+'" style="margin:0"><div style="display:flex;justify-content:space-between;align-items:center;width:100%"><div><div class="tkr">'+t+'</div><div class="sub">₹'+fmt(s.p)+'</div></div><button class="ico rm" data-i="'+i+'" style="font-size:17px;color:var(--muted)"><i class="ti ti-x"></i></button></div><div style="display:flex;gap:6px;margin-top:10px;flex-wrap:wrap">'+chips(s)+'</div></div>';}).join('');}
+document.getElementById('wlAdd').onclick=function(){var v=document.getElementById('wlIn').value.trim().toUpperCase();if(!v)return;var s=find(v);if(s){if(WL.indexOf(v)<0)WL.push(v);document.getElementById('wlIn').value='';renderWL();}else{alert('"'+v+'" is not in the free daily set. In the full app it gets scored live on demand.');}};
+function renderScore(){var sc=D.score||{};var hh=[['day','Day'],['week','Week'],['month','Month'],['year','Year']];
+ document.getElementById('scoreBody').innerHTML='<p class="sub" style="margin:4px 2px 14px">Backtested over ~10 years — live results accrue as predictions settle.</p><div class="grid">'+hh.map(function(p){var s=sc[p[0]]||{range:0,direction:0};return '<div class="card" style="margin:0"><div style="display:flex;justify-content:space-between;align-items:center"><span class="tkr" style="color:var(--accent)">'+p[1]+'</span><span class="badge b-warn">live: maturing</span></div><div style="display:flex;gap:8px;margin-top:10px"><div class="tile"><div class="v">'+s.range+'%</div><div class="l">price-in-range</div></div><div class="tile"><div class="v">'+s.direction+'%</div><div class="l">direction</div></div></div></div>';}).join('')+'</div>';}
+function renderHist(){var h=D.history||{};var keys=Object.keys(h);if(!keys.length){document.getElementById('histBody').innerHTML='<p class="sub">No history yet.</p>';return;}var labels={recent:'Recent',older:'Earlier',oldest:'Oldest'};
+ document.getElementById('histChips').innerHTML=keys.map(function(k,i){return '<div class="seg histchip'+(i===0?' active':'')+'" data-k="'+k+'">'+(labels[k]||k)+'</div>';}).join('');
+ document.querySelectorAll('.histchip').forEach(function(c){c.onclick=function(){document.querySelectorAll('.histchip').forEach(function(x){x.classList.toggle('active',x===c);});drawHist(c.dataset.k);};});drawHist(keys[0]);}
+function drawHist(k){var g=D.history[k];var sb={'Hit':'b-pos','Miss':'b-neg','n/a':'b-warn'};
+ document.getElementById('histBody').innerHTML='<p class="sub" style="margin:0 2px 10px">Predicted on '+g.date+':</p><div class="grid">'+g.items.map(function(it){return '<div class="card" style="margin:0"><div style="display:flex;justify-content:space-between;align-items:center;gap:8px"><span class="tkr">'+it.t+'</span><span class="badge '+(sb[it.status]||'b-warn')+'">'+it.status+'</span></div><div class="sub" style="margin-top:5px">'+it.hz+' · we said ₹'+fmt(it.lo)+'–₹'+fmt(it.hi)+' · actual ₹'+fmt(it.act)+'</div></div>';}).join('')+'</div>';}
+renderDash('day');renderWL();renderScore();renderHist();
+})();
+</script>
+</body>
+</html>
