@@ -18,10 +18,10 @@ body{font-family:Inter,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif}
 .btn2{background:var(--accent-soft);color:var(--accent);border:1px solid var(--accent);border-radius:10px;padding:9px 14px;font-size:13px;font-weight:500;cursor:pointer;font-family:inherit}
 .in{width:100%;background:var(--surface2);border:1px solid var(--border);color:var(--text);border-radius:10px;padding:12px 14px;font-size:15px;font-family:inherit}
 
-#landing{display:flex;flex-direction:column;min-height:100vh;background:radial-gradient(1100px 520px at 72% 22%,rgba(47,127,219,.20),transparent 70%),var(--bg)}
+#landing{position:relative;display:flex;flex-direction:column;min-height:100vh;background:linear-gradient(90deg,rgba(8,10,18,.92) 0%,rgba(8,10,18,.55) 42%,rgba(8,10,18,.12) 68%,rgba(8,10,18,0) 100%),url('bull.png') center right/cover no-repeat,#0a0c14}
 .hero-top{display:flex;align-items:center;justify-content:space-between;padding:20px 26px;max-width:1240px;margin:0 auto;width:100%}
 .logo-badge{width:42px;height:42px;border-radius:11px;background:linear-gradient(160deg,#2f7fdb,#1c5fae);color:#fff;display:flex;align-items:center;justify-content:center;font-size:22px}
-.hero-grid{flex:1;display:grid;grid-template-columns:1fr;gap:26px;align-items:center;padding:14px 26px 26px;max-width:1240px;margin:0 auto;width:100%}
+.hero-grid{flex:1;display:flex;align-items:center;padding:14px 26px 26px;max-width:1240px;margin:0 auto;width:100%}
 .hero-h1{font-size:42px;font-weight:700;line-height:1.04;letter-spacing:-1.5px}
 .hero-h1 .g{background:linear-gradient(95deg,#5b8def,#9b6cf0);-webkit-background-clip:text;background-clip:text;color:transparent}
 .hero-h1 .d{color:var(--accent)}
@@ -30,8 +30,13 @@ body{font-family:Inter,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif}
 .hero-visual{position:relative;background:linear-gradient(180deg,rgba(47,127,219,.08),rgba(255,255,255,.02));border:1px solid var(--border);border-radius:20px;min-height:300px;overflow:hidden;display:flex;align-items:flex-end}
 .nifty-card{position:absolute;top:20px;right:20px;background:rgba(14,15,19,.72);border:1px solid var(--border);border-radius:14px;padding:14px 18px}
 .nifty-card .l{font-size:13px;color:var(--muted)}.nifty-card .v{font-size:26px;font-weight:700;margin:2px 0}.nifty-card .c{font-size:14px;color:var(--pos);font-weight:600}.nifty-card .bull{display:inline-flex;gap:5px;align-items:center;margin-top:8px;background:var(--pos-soft);color:var(--pos);font-size:12px;font-weight:600;padding:4px 10px;border-radius:8px}
+.nifty-mini{position:absolute;top:78px;left:56%;background:rgba(10,12,22,.5);border:1px solid rgba(255,255,255,.18);border-radius:13px;padding:9px 14px;backdrop-filter:blur(7px);z-index:4}
+.nifty-mini .l{font-size:11px;color:#9aa8c4;letter-spacing:.3px}
+.nifty-mini .v{font-size:19px;font-weight:700;color:#fff;margin:1px 0}
+.nifty-mini .c{font-size:11.5px;color:#8fa0bd;font-weight:500}
+@media(max-width:760px){.nifty-mini{top:62px;left:auto;right:14px;padding:7px 11px}.nifty-mini .v{font-size:16px}}
 .hero-disc{display:flex;gap:10px;align-items:flex-start;padding:16px 26px;border-top:1px solid var(--border);color:var(--muted);font-size:12.5px;line-height:1.5;max-width:1240px;margin:0 auto;width:100%}
-@media(min-width:900px){.hero-grid{grid-template-columns:1.05fr .95fr;gap:46px;padding:24px 40px 40px}.hero-h1{font-size:64px}.hero-visual{min-height:380px}}
+@media(min-width:900px){.hero-grid{padding:24px 40px 40px}.hero-h1{font-size:64px}}
 
 #loginModal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:50;align-items:center;justify-content:center;padding:20px}
 #loginModal.open{display:flex}
@@ -88,32 +93,16 @@ body{font-family:Inter,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif}
       <div class="brand"><span class="logo-badge"><i class="ti ti-chart-candle"></i></span> Stock<b>IT</b> <i class="s">by Priyesh</i></div>
       <button class="btn" data-login>Login Now <i class="ti ti-arrow-right"></i></button>
     </div>
+    <div class="nifty-mini">
+      <div class="l">NIFTY 50</div>
+      <div class="v">24,021.65</div>
+      <div class="c">last close · 24 Jun</div>
+    </div>
     <div class="hero-grid">
-      <div>
+      <div style="max-width:520px">
         <div class="hero-h1"><span class="g">AI</span> Smarter<br/>Insights<span class="d">.</span></div>
         <div class="aline"></div>
         <div class="hero-sub">AI-powered insights for smarter stock market decisions.</div>
-      </div>
-      <div class="hero-visual">
-        <div class="nifty-card">
-          <div class="l">NIFTY 50</div>
-          <div class="v">24,021.65</div>
-          <div class="c" style="color:var(--muted);font-weight:500">last close · 24 Jun 2026</div>
-        </div>
-        <svg viewBox="0 0 520 300" width="100%" height="100%" preserveAspectRatio="xMidYMax meet" style="display:block">
-          <g stroke-linecap="butt">
-            <line x1="40" y1="232" x2="40" y2="262" stroke="#e8736f" stroke-width="2"/><rect x="33" y="240" width="14" height="16" rx="2" fill="#e8736f"/>
-            <line x1="90" y1="218" x2="90" y2="250" stroke="#37c46f" stroke-width="2"/><rect x="83" y="226" width="14" height="18" rx="2" fill="#37c46f"/>
-            <line x1="140" y1="204" x2="140" y2="238" stroke="#37c46f" stroke-width="2"/><rect x="133" y="212" width="14" height="18" rx="2" fill="#37c46f"/>
-            <line x1="190" y1="216" x2="190" y2="250" stroke="#e8736f" stroke-width="2"/><rect x="183" y="224" width="14" height="18" rx="2" fill="#e8736f"/>
-            <line x1="240" y1="180" x2="240" y2="216" stroke="#37c46f" stroke-width="2"/><rect x="233" y="188" width="14" height="20" rx="2" fill="#37c46f"/>
-            <line x1="290" y1="160" x2="290" y2="196" stroke="#37c46f" stroke-width="2"/><rect x="283" y="168" width="14" height="20" rx="2" fill="#37c46f"/>
-            <line x1="340" y1="174" x2="340" y2="210" stroke="#e8736f" stroke-width="2"/><rect x="333" y="182" width="14" height="20" rx="2" fill="#e8736f"/>
-            <line x1="390" y1="134" x2="390" y2="172" stroke="#37c46f" stroke-width="2"/><rect x="383" y="142" width="14" height="22" rx="2" fill="#37c46f"/>
-            <line x1="445" y1="100" x2="445" y2="148" stroke="#37c46f" stroke-width="2"/><rect x="438" y="108" width="14" height="28" rx="2" fill="#37c46f"/>
-          </g>
-          <circle cx="445" cy="104" r="5" fill="#37c46f"/>
-        </svg>
       </div>
     </div>
     <div class="hero-disc"><i class="ti ti-info-circle" style="font-size:15px"></i><span>Predictions are generated by machine-learning models and are intended for informational purposes only. They do not constitute investment advice or a recommendation to buy or sell any securities.</span></div>
