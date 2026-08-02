@@ -329,9 +329,9 @@ function renderFolio(){var P=D.portfolio;var b=document.getElementById('folioBod
   +audit+bt+metalsSection();}
 // system health — so a broken feed or an expired token is never silent
 function healthBar(){var H=D.health||{};var asOf=D.asOf||'';var stale=H.staleDays!=null&&H.staleDays>4;
- var bad=(H.upstox==='failed')||stale||H.error;
+ var bad=(H.upstox==='failed')||stale||H.error||H.mfError||H.metalsError;
  if(!bad)return '<div class="sub" style="margin:2px 2px 8px;display:flex;align-items:center;gap:6px"><span style="width:8px;height:8px;border-radius:50%;background:var(--pos);display:inline-block"></span>Data '+asOf+' · source: '+(H.source||'—')+'</div>';
- var msg=H.error?H.error:(H.upstox==='failed'?'Upstox token failed or expired — the site is running on backup data. Generate a new Analytics Token in Upstox and update the UPSTOX_ACCESS_TOKEN secret.':'Prices are '+H.staleDays+' days old — the nightly job may have stopped.');
+ var msg=H.error?H.error:(H.upstox==='failed'?'Upstox token failed or expired — the site is running on backup data. Generate a new Analytics Token in Upstox and update the UPSTOX_ACCESS_TOKEN secret.':(H.mfError?'The mutual fund book did not build tonight, so the Funds page is showing the last good version. Reason: '+H.mfError:(H.metalsError?'The metals book did not build tonight. Reason: '+H.metalsError:'Prices are '+H.staleDays+' days old — the nightly job may have stopped.')));
  return '<div class="badge b-neg" style="display:block;padding:11px 13px;margin:2px 0 10px;font-size:13px;line-height:1.5"><i class="ti ti-alert-triangle"></i> <b>Needs attention</b><br>'+msg+'</div>';}
 var MNAME={GOLDBEES:'Gold ETF (GOLDBEES)',SILVERBEES:'Silver ETF (SILVERBEES)'};
 function metalsSection(){var M=D.metals;if(!M)return '';
