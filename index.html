@@ -206,7 +206,10 @@ var SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI
 var SB=null;
 try{if(window.supabase&&SB_URL.indexOf('https://')===0){SB=window.supabase.createClient(SB_URL,SB_KEY);}}catch(x){SB=null;}
 var AUTH_ON=false;
-function openModal(){document.getElementById('loginForm').style.display='block';document.getElementById('loginErr').textContent='';document.getElementById('loginModal').classList.add('open');}
+// Null-safe on purpose: authOffline() rewrites the form, which deletes
+// #loginErr and #doLogin. Dereferencing them here threw, so the modal never
+// opened and 'Login Now' silently did nothing.
+function openModal(){var f=document.getElementById('loginForm');if(f)f.style.display='block';var e=document.getElementById('loginErr');if(e)e.textContent='';document.getElementById('loginModal').classList.add('open');}
 document.querySelectorAll('[data-login]').forEach(function(b){b.onclick=openModal;});
 function enterApp(){document.getElementById('loginModal').classList.remove('open');document.getElementById('landing').style.display='none';document.getElementById('app').style.display='block';}
 function authOffline(why){AUTH_ON=false;
@@ -215,7 +218,8 @@ function authOffline(why){AUTH_ON=false;
   +'<div class="badge b-warn" style="display:block;padding:10px 12px;margin-bottom:14px;font-size:12px;line-height:1.6;text-align:left"><b>This changes nothing about who can see your data.</b> The site is served from public GitHub Pages, so anyone with the link can already read every holding and pick straight from data.js — with or without a login. A sign-in box on a static page hides the screen, never the data.</div>'
   +'<button class="btn" id="openAnyway" style="width:100%;justify-content:center">Open dashboard <i class="ti ti-arrow-right"></i></button>';
  var b=document.getElementById('openAnyway');if(b)b.onclick=enterApp;
- var n=document.getElementById('authNote');if(n)n.style.display='block';}
+ var n=document.getElementById('authNote');if(n)n.style.display='block';
+ document.querySelectorAll('[data-login]').forEach(function(x){x.innerHTML='Open dashboard <i class="ti ti-arrow-right"></i>';});}
 document.getElementById('doLogin').onclick=async function(){
  var em=document.getElementById('email').value.trim(),p=document.getElementById('pass').value,e=document.getElementById('loginErr');
  if(!AUTH_ON||!SB){enterApp();return;}
