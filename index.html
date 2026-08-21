@@ -219,7 +219,7 @@ function authOffline(why){AUTH_ON=false;
   +'<button class="btn" id="openAnyway" style="width:100%;justify-content:center">Open dashboard <i class="ti ti-arrow-right"></i></button>';
  var b=document.getElementById('openAnyway');if(b)b.onclick=enterApp;
  var n=document.getElementById('authNote');if(n)n.style.display='block';
- document.querySelectorAll('[data-login]').forEach(function(x){x.innerHTML='Open dashboard <i class="ti ti-arrow-right"></i>';});}
+ document.querySelectorAll('[data-login]').forEach(function(x){x.innerHTML='Open dashboard <i class="ti ti-arrow-right"></i>';x.onclick=enterApp;});}
 document.getElementById('doLogin').onclick=async function(){
  var em=document.getElementById('email').value.trim(),p=document.getElementById('pass').value,e=document.getElementById('loginErr');
  if(!AUTH_ON||!SB){enterApp();return;}
